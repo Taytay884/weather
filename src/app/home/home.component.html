@@ -1,1 +1,38 @@
-<p>home works!</p>
+<mat-form-field class="example-full-width">
+  <span matPrefix><mat-icon>search</mat-icon> &nbsp;</span>
+  <input type="search" matInput placeholder="City">
+</mat-form-field>
+
+<div class="result-container">
+  <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+    <div class="left">
+      <h2>Tel Aviv</h2>
+      <span>38 °C</span>
+    </div>
+    <div class="right">
+      <button mat-icon-button><mat-icon>star_border</mat-icon></button>
+      <button mat-raised-button>Add to Favorites</button>
+    </div>
+  </div>
+  <div class="center-title">
+    <h1>Scattered Clouds</h1>
+    <mat-icon>cloud</mat-icon>
+  </div>
+  <div class="footer" fxLayout="row wrap" fxLayoutAlign.gt-xs="space-between" fxLayoutAlign.xs="center">
+    <div class="card">
+      <app-weather-day-card></app-weather-day-card>
+    </div>
+    <div class="card">
+      <app-weather-day-card></app-weather-day-card>
+    </div>
+    <div class="card">
+      <app-weather-day-card></app-weather-day-card>
+    </div>
+    <div class="card">
+      <app-weather-day-card></app-weather-day-card>
+    </div>
+    <div class="card">
+      <app-weather-day-card></app-weather-day-card>
+    </div>
+  </div>
+</div>

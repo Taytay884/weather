@@ -6,16 +6,26 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreModule} from '@ngrx/store';
 import {metaReducers, reducers} from './reducers';
-import {MatButtonModule, MatIconModule, MatMenuModule, MatSliderModule, MatToolbarModule} from "@angular/material";
+import {
+  MatButtonModule, MatCardModule,
+  MatIconModule, MatInputModule,
+  MatMenuModule,
+  MatSliderModule,
+  MatToolbarModule
+} from "@angular/material";
 import {FlexLayoutModule} from "@angular/flex-layout";
-import { HomeComponent } from './home/home.component';
-import { FavoritesComponent } from './favorites/favorites.component';
+import {HomeComponent} from './home/home.component';
+import {FavoritesComponent} from './favorites/favorites.component';
+import { WeatherDayCardComponent } from './home/weather-day-card/weather-day-card.component';
+import { WeatherCityCardComponent } from './favorites/weather-city-card/weather-city-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    FavoritesComponent
+    FavoritesComponent,
+    WeatherDayCardComponent,
+    WeatherCityCardComponent
   ],
   imports: [
     BrowserModule,
@@ -34,8 +44,11 @@ import { FavoritesComponent } from './favorites/favorites.component';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatInputModule,
+    MatCardModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

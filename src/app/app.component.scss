@@ -4,3 +4,13 @@
  Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
+
+.main-container {
+  padding: 10px 16px 0;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.layout {
+  min-height: 100vh;
+}
