@@ -1,2 +1,22 @@
-<mat-slider min="1" max="100" step="1" value="1"></mat-slider>
+<mat-toolbar color="primary">
+  <button mat-button routerLink="/">
+    <mat-icon>wb_sunny</mat-icon>
+    {{title}}
+  </button>
+
+  <span class="fill-remaining-space"></span>
+
+  <div fxLayout="row" fxHide fxShow.gt-sm>
+    <button mat-button routerLink="/home" routerLinkActive="mat-accent"><mat-icon>home</mat-icon> Home</button>
+    <button mat-button routerLink="/favorites" routerLinkActive="mat-accent">Favorites</button>
+  </div>
+  <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-sm>
+    <mat-icon>menu</mat-icon>
+  </button>
+
+</mat-toolbar>
+<mat-menu x-position="before" #menu>
+  <button mat-menu-item routerLink="/home" routerLinkActive="mat-accent"><mat-icon>home</mat-icon> Home</button>
+  <button mat-menu-item routerLink="/favorites" routerLinkActive="mat-accent">Favorites</button>
+</mat-menu>
 <router-outlet></router-outlet>

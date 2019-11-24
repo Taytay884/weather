@@ -6,11 +6,16 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreModule} from '@ngrx/store';
 import {metaReducers, reducers} from './reducers';
-import {MatSliderModule} from "@angular/material";
+import {MatButtonModule, MatIconModule, MatMenuModule, MatSliderModule, MatToolbarModule} from "@angular/material";
+import {FlexLayoutModule} from "@angular/flex-layout";
+import { HomeComponent } from './home/home.component';
+import { FavoritesComponent } from './favorites/favorites.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    FavoritesComponent
   ],
   imports: [
     BrowserModule,
@@ -24,6 +29,11 @@ import {MatSliderModule} from "@angular/material";
       }
     }),
     MatSliderModule,
+    FlexLayoutModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
