@@ -1,13 +1,20 @@
 <mat-form-field class="example-full-width">
   <span matPrefix><mat-icon>search</mat-icon> &nbsp;</span>
-  <input type="search" matInput placeholder="City">
+  <input type="search" matInput [formControl]="myControl" placeholder="City" (input)="onSearchInput($event.target.value)" [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let city of cities$ | async" [value]="city.name" (onSelectionChange)="onCitySelected(city)">
+      {{city.name}}
+    </mat-option>
+  </mat-autocomplete>
 </mat-form-field>
 
-<div class="result-container">
+<div class="result-container" *ngIf="(currentWeather$ | async) as currentWeather">
   <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
     <div class="left">
-      <h2>Tel Aviv</h2>
-      <span>38 °C</span>
+      <h2>{{selectedCity?.name}}</h2>
+      <!--todo: imperial or metric-->
+      <span>{{currentWeather?.Temperature.Metric.Value + ' °C'}}</span>
+      <!--<span>{{currentWeather?.Temperature.Imperial.Value + ' °F'}}</span>-->
     </div>
     <div class="right">
       <button mat-icon-button><mat-icon>star_border</mat-icon></button>
@@ -15,24 +22,12 @@
     </div>
   </div>
   <div class="center-title">
-    <h1>Scattered Clouds</h1>
-    <mat-icon>cloud</mat-icon>
+    <h1>{{currentWeather.WeatherText}}</h1>
+    <img src="{{'assets/weather-icons/' + currentWeather.WeatherIcon + '-s.png'}}" alt="">
   </div>
   <div class="footer" fxLayout="row wrap" fxLayoutAlign.gt-xs="space-between" fxLayoutAlign.xs="center">
-    <div class="card">
-      <app-weather-day-card></app-weather-day-card>
-    </div>
-    <div class="card">
-      <app-weather-day-card></app-weather-day-card>
-    </div>
-    <div class="card">
-      <app-weather-day-card></app-weather-day-card>
-    </div>
-    <div class="card">
-      <app-weather-day-card></app-weather-day-card>
-    </div>
-    <div class="card">
-      <app-weather-day-card></app-weather-day-card>
+    <div *ngFor="let dailyForecast of (currentFiveDaysForecast$ | async)" class="card">
+      <app-weather-day-card [dailyForecast]="dailyForecast"></app-weather-day-card>
     </div>
   </div>
 </div>

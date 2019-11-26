@@ -7,17 +7,21 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreModule} from '@ngrx/store';
 import {metaReducers, reducers} from './reducers';
 import {
-  MatButtonModule, MatCardModule,
+  MAT_SNACK_BAR_DEFAULT_OPTIONS,
+  MatAutocompleteModule,
+  MatButtonModule, MatCardModule, MatDividerModule,
   MatIconModule, MatInputModule,
   MatMenuModule,
-  MatSliderModule,
+  MatSliderModule, MatSnackBarModule,
   MatToolbarModule
-} from "@angular/material";
+} from '@angular/material';
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {HomeComponent} from './home/home.component';
 import {FavoritesComponent} from './favorites/favorites.component';
 import { WeatherDayCardComponent } from './home/weather-day-card/weather-day-card.component';
 import { WeatherCityCardComponent } from './favorites/weather-city-card/weather-city-card.component';
+import {HttpClientModule} from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -46,6 +50,11 @@ import { WeatherCityCardComponent } from './favorites/weather-city-card/weather-
     MatButtonModule,
     MatInputModule,
     MatCardModule,
+    MatAutocompleteModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatDividerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
