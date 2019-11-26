@@ -1,0 +1,14 @@
+<mat-card class="weather-day-card" fxLayout="column" fxLayoutAlign="center center" *ngIf="dailyForecast">
+  <mat-card-header>
+    <mat-card-title>{{dailyForecast.getDayName()}}</mat-card-title>
+  </mat-card-header>
+  <img src="{{'assets/weather-icons/' + dailyForecast.day.Icon + '-s.png'}}" alt="">
+  <mat-card-subtitle>{{dailyForecast.day.IconPhrase}}</mat-card-subtitle>
+    <span>{{dailyForecast.temperature.Maximum.Value}} °{{dailyForecast.temperature.Maximum.Unit}}</span>
+  <div class="divider">
+    <mat-divider></mat-divider>
+  </div>
+  <img src="{{'assets/weather-icons/' + dailyForecast.night.Icon + '-s.png'}}" alt="">
+  <mat-card-subtitle>{{dailyForecast.night.IconPhrase}}</mat-card-subtitle>
+    <span>{{dailyForecast.temperature.Minimum.Value}} °{{dailyForecast.temperature.Minimum.Unit}}</span>
+</mat-card>
