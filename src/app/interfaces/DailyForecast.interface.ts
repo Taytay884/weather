@@ -1,4 +1,4 @@
-interface DailyForecastInterface {
+export interface DailyForecastInterface {
   Date: string;
   EpochDate: number;
   Temperature: {Minimum: {Value: number, Unit: string, UnitType: number}, Maximum: {Value: number, Unit: string, UnitType: number}};

@@ -1,4 +1,4 @@
-interface AutocompleteCityInterface {
+export interface AutocompleteCityInterface {
   Version: number;
   Key: string;
   Type: string;

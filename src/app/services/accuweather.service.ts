@@ -1,8 +1,14 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandlerService} from './error-handler.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {DailyForecastModel} from '../models/DailyForecast.model';
+import {AutocompleteCityInterface} from '../interfaces/AutocompleteCity.interface';
+import {ForecastInterface} from '../interfaces/Forecast.interface';
+import {CityInterface} from '../interfaces/City.interface';
+import {CurrentWeatherInterface} from '../interfaces/CurrentWeather.interface';
+import {DailyForecastInterface} from '../interfaces/DailyForecast.interface';
+import {catchError, map} from 'rxjs/operators';
 
 const mockAutoCompleteJson = [
   {
@@ -250,12 +256,22 @@ export class AccuweatherService {
   constructor(private http: HttpClient, private errorHandler: ErrorHandlerService) {
   }
 
-  getLocationAutoComplete(query: string): void {
-    this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).subscribe((res: AutocompleteCityInterface[]) => {
-      this.citiesSubject.next(this.getCitiesFromAutocompleteJson(res));
-    }, (err) => {
-      this.errorHandler.openErrorSnackBar(err);
-    });
+  getLocationAutoComplete(query: string): Observable<CityInterface[]> {
+    if (!query) { return of([]); }
+    return this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).pipe(
+      map((res: AutocompleteCityInterface[]) => {
+        return this.getCitiesFromAutocompleteJson(res);
+      }), catchError((err) => {
+        this.errorHandler.openErrorSnackBar('An error occured, cannot load cities.');
+        return of(null);
+      })
+    );
+    // );
+    // this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).subscribe((res: AutocompleteCityInterface[]) => {
+    //   this.citiesSubject.next(this.getCitiesFromAutocompleteJson(res));
+    // }, (err) => {
+    //   this.errorHandler.openErrorSnackBar('An error occured, cannot load cities.');
+    // });
   }
 
   private getCitiesFromAutocompleteJson(citiesJson: AutocompleteCityInterface[]): CityInterface[] {
@@ -267,10 +283,10 @@ export class AccuweatherService {
   getLocationCurrentWeather(locationKey: string) {
     this.http.get(`${this.currentWeatherUrl}/${locationKey}`, {params: {apikey: this.apikey}})
       .subscribe((res: CurrentWeatherInterface[]) => {
-      this.currentWeatherSubject.next(res[0]);
-    }, (err) => {
-      this.errorHandler.openErrorSnackBar(err);
-    });
+        this.currentWeatherSubject.next(res[0]);
+      }, (err) => {
+        this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');
+      });
   }
 
   getLocation5DaysForecast(locationKey: string): void {
@@ -279,7 +295,7 @@ export class AccuweatherService {
       .subscribe((res: ForecastInterface) => {
         this.fiveDaysForecastSubject.next(this.mapFiveDaysForecast(res));
       }, (err) => {
-        this.errorHandler.openErrorSnackBar(err);
+        this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');
       });
   }
 

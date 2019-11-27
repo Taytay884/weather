@@ -1,4 +1,6 @@
-interface ForecastInterface {
+import {DailyForecastInterface} from './DailyForecast.interface';
+
+export interface ForecastInterface {
   Headline: {
     EffectiveDate: string;
     EffectiveEpochDate: number;

@@ -1,6 +1,10 @@
-<mat-form-field class="example-full-width">
-  <span matPrefix><mat-icon>search</mat-icon> &nbsp;</span>
-  <input type="search" matInput [formControl]="myControl" placeholder="City" (input)="onSearchInput($event.target.value)" [matAutocomplete]="auto">
+<mat-form-field class="search-bar">
+    <span matPrefix>
+      <mat-icon>search</mat-icon> &nbsp;
+    </span>
+  <input type="search" matInput [formControl]="myControl" placeholder="City"
+         (input)="onSearchInput($event.target.value)" [matAutocomplete]="auto">
+  <span matSuffix *ngIf="citiesLoading$ | async"><mat-spinner diameter="24"></mat-spinner></span>
   <mat-autocomplete #auto="matAutocomplete">
     <mat-option *ngFor="let city of cities$ | async" [value]="city.name" (onSelectionChange)="onCitySelected(city)">
       {{city.name}}
@@ -17,7 +21,9 @@
       <!--<span>{{currentWeather?.Temperature.Imperial.Value + ' °F'}}</span>-->
     </div>
     <div class="right">
-      <button mat-icon-button><mat-icon>star_border</mat-icon></button>
+      <button mat-icon-button>
+        <mat-icon>star_border</mat-icon>
+      </button>
       <button mat-raised-button>Add to Favorites</button>
     </div>
   </div>

@@ -1,4 +1,4 @@
-interface CityInterface {
+export interface CityInterface {
   name: string;
   key: string;
 }

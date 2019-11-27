@@ -1,4 +1,4 @@
-interface CurrentWeatherInterface {
+export interface CurrentWeatherInterface {
   LocalObservationDateTime: string;
   EpochTime: number;
   WeatherText: string;

@@ -4,24 +4,30 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {StoreModule} from '@ngrx/store';
-import {metaReducers, reducers} from './reducers';
 import {
-  MAT_SNACK_BAR_DEFAULT_OPTIONS,
   MatAutocompleteModule,
-  MatButtonModule, MatCardModule, MatDividerModule,
-  MatIconModule, MatInputModule,
-  MatMenuModule,
-  MatSliderModule, MatSnackBarModule,
-  MatToolbarModule
+  MatButtonModule,
+  MatCardModule,
+  MatDividerModule,
+  MatIconModule,
+  MatInputModule,
+  MatMenuModule, MatProgressSpinnerModule,
+  MatSliderModule,
+  MatSnackBarModule,
+  MatToolbarModule,
 } from '@angular/material';
-import {FlexLayoutModule} from "@angular/flex-layout";
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {HomeComponent} from './home/home.component';
 import {FavoritesComponent} from './favorites/favorites.component';
-import { WeatherDayCardComponent } from './home/weather-day-card/weather-day-card.component';
-import { WeatherCityCardComponent } from './favorites/weather-city-card/weather-city-card.component';
+import {WeatherDayCardComponent} from './home/weather-day-card/weather-day-card.component';
+import {WeatherCityCardComponent} from './favorites/weather-city-card/weather-city-card.component';
 import {HttpClientModule} from '@angular/common/http';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
+import {StoreModule} from '@ngrx/store';
+import {appReducers} from './store/reducers/app.reducer';
+import {EffectsModule} from '@ngrx/effects';
+import {WeatherEffects} from './store/effects/weather.effects';
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -35,13 +41,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot(reducers, {
-      metaReducers,
-      runtimeChecks: {
-        strictStateImmutability: true,
-        strictActionImmutability: true
-      }
-    }),
     MatSliderModule,
     FlexLayoutModule,
     MatToolbarModule,
@@ -55,6 +54,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     ReactiveFormsModule,
     MatSnackBarModule,
     MatDividerModule,
+    MatProgressSpinnerModule,
+    StoreModule.forRoot(appReducers),
+    EffectsModule.forRoot([WeatherEffects]),
+    StoreRouterConnectingModule.forRoot({stateKey: 'router'}),
   ],
   providers: [],
   bootstrap: [AppComponent]
