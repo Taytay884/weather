@@ -1,47 +1,100 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AccuweatherService} from '../services/accuweather.service';
 import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {DailyForecastModel} from '../models/DailyForecast.model';
 import {CityInterface} from '../interfaces/City.interface';
 import {CurrentWeatherInterface} from '../interfaces/CurrentWeather.interface';
 import {select, Store} from '@ngrx/store';
 import {IAppState} from '../store/state/app.state';
-import {GetCities} from '../store/actions/weather.actions';
-import {selectCities, selectCitiesLoading} from '../store/selectors/weather.selectors';
+import {
+  AddToFavorites,
+  GetCities,
+  GetCurrentWeather,
+  GetForecast,
+  RemoveFromFavorites,
+  SetSelectedCity
+} from '../store/actions/weather.actions';
+import {
+  selectCities,
+  selectCitiesLoading,
+  selectCurrentWeather,
+  selectCurrentWeatherLoading, selectFavoriteCities, selectForecast, selectForecastLoading,
+  selectSelectedCity
+} from '../store/selectors/weather.selectors';
+import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.interface';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   myControl = new FormControl();
   selectedCity: CityInterface;
-  cities$: Observable<CityInterface[]> = this._store.pipe(select(selectCities));
-  citiesLoading$: Observable<boolean> = this._store.pipe(select(selectCitiesLoading));
-  currentWeather$: Observable<CurrentWeatherInterface>;
-  currentFiveDaysForecast$: Observable<DailyForecastModel[]>;
+  selectedCitySubscription: Subscription;
+  favoriteCities: FavoriteCityWeatherInterface[];
+  favoriteCitiesSubscription: Subscription;
+  cities$: Observable<CityInterface[]> = this.store.pipe(select(selectCities));
+  citiesLoading$: Observable<boolean> = this.store.pipe(select(selectCitiesLoading));
+  currentWeather$: Observable<CurrentWeatherInterface> = this.store.pipe(select(selectCurrentWeather));
+  currentWeatherLoading$: Observable<boolean> = this.store.pipe(select(selectCurrentWeatherLoading));
+  currentFiveDaysForecast$: Observable<DailyForecastModel[]> = this.store.pipe(select(selectForecast));
+  currentFiveDaysForecastLoading$: Observable<boolean> = this.store.pipe(select(selectForecastLoading));
 
-  constructor(private accuweatherService: AccuweatherService, private _store: Store<IAppState>) {
-    // this.cities$ = this.accuweatherService.cities$;
-    this.currentWeather$ = this.accuweatherService.currentWeather$;
-    this.currentFiveDaysForecast$ = this.accuweatherService.fiveDaysForecast$;
+  constructor(private accuweatherService: AccuweatherService, private store: Store<IAppState>) {
+    this.selectedCitySubscription = this.store.pipe(select(selectSelectedCity)).subscribe(
+      (city: CityInterface) => {
+        this.selectedCity = city;
+      });
+    this.favoriteCitiesSubscription = this.store.pipe(select(selectFavoriteCities)).subscribe(
+      (favoriteCities: FavoriteCityWeatherInterface[]) => {
+        this.favoriteCities = favoriteCities;
+      });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    if (this.selectedCity) {
+      this.myControl.setValue(this.selectedCity.name);
+    }
   }
 
   onSearchInput(searchText: string): void {
-    this._store.dispatch(new GetCities(searchText));
-    // this.accuweatherService.getLocationAutoComplete(searchText);
+    this.store.dispatch(new GetCities(searchText));
   }
 
-  onCitySelected(city: CityInterface): void {
-    this.selectedCity = city;
-    this.accuweatherService.getLocationCurrentWeather(city.key);
-    this.accuweatherService.getLocation5DaysForecast(city.key);
+  onCitySelected(cityName: string): void {
+    const subscription = this.cities$.subscribe((cities: CityInterface[]) => {
+      const selectedCity = cities.find((city: CityInterface) => cityName === city.name);
+      this.store.dispatch(new SetSelectedCity(selectedCity));
+      this.store.dispatch(new GetCurrentWeather(selectedCity.key));
+      this.store.dispatch(new GetForecast(selectedCity.key));
+    });
+    subscription.unsubscribe();
+  }
+
+  onAddToFavoritesClicked(): void {
+    this.currentWeather$.subscribe((currentWeather) => {
+      this.store.dispatch(new AddToFavorites({city: this.selectedCity, currentWeather}));
+    });
+  }
+
+  onRemoveFromFavoritesClicked(): void {
+    const favoriteCityIndex = this.favoriteCities.findIndex((favoriteCity) => favoriteCity.city.key === this.selectedCity.key);
+    this.store.dispatch(new RemoveFromFavorites(favoriteCityIndex));
+  }
+
+  checkIsSelectedCityFavorite(): boolean {
+    if (!this.favoriteCities || !this.selectedCity) {
+      return false;
+    }
+    return !!this.favoriteCities.find((favoriteCity) => favoriteCity.city.key === this.selectedCity.key);
+  }
+
+  ngOnDestroy() {
+    this.selectedCitySubscription.unsubscribe();
+    this.favoriteCitiesSubscription.unsubscribe();
   }
 
 }

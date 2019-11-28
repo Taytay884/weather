@@ -1,6 +1,6 @@
-<div fxLayout="row wrap" fxLayoutAlign="center">
-  <app-weather-city-card></app-weather-city-card>
-  <app-weather-city-card></app-weather-city-card>
-  <app-weather-city-card></app-weather-city-card>
-  <app-weather-city-card></app-weather-city-card>
-</div>
+<ul class="favorites" fxLayout="row wrap" fxLayoutAlign="center">
+  <li *ngFor="let favCity of favoriteCities$ | async; let cityIndex = index">
+    <app-weather-city-card [city]="favCity.city" [weather]="favCity.currentWeather"></app-weather-city-card>
+    <button class="delete-button mat-warn" mat-stroked-button (click)="onRemoveFromFavorites(cityIndex)">Remove</button>
+  </li>
+</ul>

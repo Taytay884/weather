@@ -5,14 +5,17 @@
   <input type="search" matInput [formControl]="myControl" placeholder="City"
          (input)="onSearchInput($event.target.value)" [matAutocomplete]="auto">
   <span matSuffix *ngIf="citiesLoading$ | async"><mat-spinner diameter="24"></mat-spinner></span>
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let city of cities$ | async" [value]="city.name" (onSelectionChange)="onCitySelected(city)">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelected($event.option.value)">
+    <mat-option *ngFor="let city of cities$ | async" [value]="city.name">
       {{city.name}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>
 
-<div class="result-container" *ngIf="(currentWeather$ | async) as currentWeather">
+<div fxLayout="row" fxLayoutAlign="center center" *ngIf="(currentWeatherLoading$ | async)">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+<div class="result-container" *ngIf="!(currentWeatherLoading$ | async) && (currentWeather$ | async) as currentWeather">
   <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
     <div class="left">
       <h2>{{selectedCity?.name}}</h2>
@@ -21,18 +24,31 @@
       <!--<span>{{currentWeather?.Temperature.Imperial.Value + ' °F'}}</span>-->
     </div>
     <div class="right">
-      <button mat-icon-button>
-        <mat-icon>star_border</mat-icon>
-      </button>
-      <button mat-raised-button>Add to Favorites</button>
+      <div *ngIf="!checkIsSelectedCityFavorite()">
+        <button mat-icon-button (click)="onAddToFavoritesClicked()">
+          <mat-icon>star_border</mat-icon>
+        </button>
+        <button mat-raised-button (click)="onAddToFavoritesClicked()">Add to Favorites</button>
+      </div>
+      <div *ngIf="checkIsSelectedCityFavorite()">
+        <button mat-icon-button (click)="onRemoveFromFavoritesClicked()">
+          <mat-icon>star</mat-icon>
+        </button>
+        <button mat-raised-button (click)="onRemoveFromFavoritesClicked()">Remove From Favorites</button>
+      </div>
     </div>
   </div>
   <div class="center-title">
     <h1>{{currentWeather.WeatherText}}</h1>
-    <img src="{{'assets/weather-icons/' + currentWeather.WeatherIcon + '-s.png'}}" alt="">
+    <img src="{{'assets/weather-icons/' + currentWeather.WeatherIcon + '-s.png'}}" alt="{{currentWeather.WeatherText}}">
   </div>
-  <div class="footer" fxLayout="row wrap" fxLayoutAlign.gt-xs="space-between" fxLayoutAlign.xs="center">
-    <div *ngFor="let dailyForecast of (currentFiveDaysForecast$ | async)" class="card">
+  <div fxLayout="row" fxLayoutAlign="center center" *ngIf="(currentFiveDaysForecastLoading$ | async)">
+    <mat-spinner diameter="30"></mat-spinner>
+  </div>
+  <div *ngIf="!(currentFiveDaysForecastLoading$ | async)" class="footer" fxLayout="row wrap"
+       fxLayoutAlign.gt-xs="space-between" fxLayoutAlign.xs="center">
+    <div [hidden]="(currentFiveDaysForecastLoading$ | async)"
+         *ngFor="let dailyForecast of (currentFiveDaysForecast$ | async)" class="card">
       <app-weather-day-card [dailyForecast]="dailyForecast"></app-weather-day-card>
     </div>
   </div>

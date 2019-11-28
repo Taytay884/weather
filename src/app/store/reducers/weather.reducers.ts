@@ -23,22 +23,62 @@ export const weatherReducers = (state = initialWeatherState, action: WeatherActi
         citiesLoading: false
       };
     }
-    case EWeatherActions.GetSelectedCitySuccess: {
+    case EWeatherActions.SetSelectedCity: {
       return {
         ...state,
         selectedCity: action.payload
       };
     }
+    case EWeatherActions.GetCurrentWeather: {
+      return {
+        ...state,
+        currentWeatherLoading: true
+      };
+    }
     case EWeatherActions.GetCurrentWeatherSuccess: {
       return {
         ...state,
-        currentWeather: action.payload
+        currentWeather: action.payload,
+        currentWeatherLoading: false
+      };
+    }
+    case EWeatherActions.GetCurrentWeatherFail: {
+      return {
+        ...state,
+        currentWeather: null,
+        currentWeatherLoading: false
+      };
+    }
+    case EWeatherActions.GetForecast: {
+      return {
+        ...state,
+        forecastLoading: true
       };
     }
     case EWeatherActions.GetForecastSuccess: {
       return {
         ...state,
-        forecast: action.payload
+        forecast: action.payload,
+        forecastLoading: false
+      };
+    }
+    case EWeatherActions.GetForecastFail: {
+      return {
+        ...state,
+        forecast: null,
+        forecastLoading: false
+      };
+    }
+    case EWeatherActions.AddToFavorites: {
+      return {
+        ...state,
+        favoriteCities: [...state.favoriteCities, action.payload]
+      };
+    }
+    case EWeatherActions.RemoveFromFavorites: {
+      return {
+        ...state,
+        favoriteCities: state.favoriteCities.filter((favoriteCity, index) => action.payload !== index)
       };
     }
     default:

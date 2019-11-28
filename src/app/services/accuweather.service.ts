@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorHandlerService} from './error-handler.service';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {DailyForecastModel} from '../models/DailyForecast.model';
 import {AutocompleteCityInterface} from '../interfaces/AutocompleteCity.interface';
 import {ForecastInterface} from '../interfaces/Forecast.interface';
@@ -241,14 +241,8 @@ const mock5DaysForecast = {
 })
 export class AccuweatherService {
 
-  currentWeatherSubject = new BehaviorSubject<CurrentWeatherInterface>(null);
-  currentWeather$ = this.currentWeatherSubject.asObservable();
-  citiesSubject = new BehaviorSubject([]);
-  cities$ = this.citiesSubject.asObservable();
-  fiveDaysForecastSubject = new BehaviorSubject([]);
-  fiveDaysForecast$ = this.fiveDaysForecastSubject.asObservable();
-
-  apikey = 'xqrHn8gB0aQpaC3m2Ujhadx9cd6RaZGt';
+  // apikey = 'xqrHn8gB0aQpaC3m2Ujhadx9cd6RaZGt';
+  apikey = 'IuPr9m7gy8juWIP3SbAOoWAox0VGWC5u';
   cityAutoCompleteUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
   currentWeatherUrl = 'http://dataservice.accuweather.com/currentconditions/v1';
   fiveDaysForecastUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day';
@@ -258,7 +252,9 @@ export class AccuweatherService {
 
   getLocationAutoComplete(query: string): Observable<CityInterface[]> {
     if (!query) { return of([]); }
-    return this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).pipe(
+
+    // return this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).pipe(
+    return of(mockAutoCompleteJson).pipe(
       map((res: AutocompleteCityInterface[]) => {
         return this.getCitiesFromAutocompleteJson(res);
       }), catchError((err) => {
@@ -266,12 +262,6 @@ export class AccuweatherService {
         return of(null);
       })
     );
-    // );
-    // this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).subscribe((res: AutocompleteCityInterface[]) => {
-    //   this.citiesSubject.next(this.getCitiesFromAutocompleteJson(res));
-    // }, (err) => {
-    //   this.errorHandler.openErrorSnackBar('An error occured, cannot load cities.');
-    // });
   }
 
   private getCitiesFromAutocompleteJson(citiesJson: AutocompleteCityInterface[]): CityInterface[] {
@@ -280,30 +270,37 @@ export class AccuweatherService {
     });
   }
 
-  getLocationCurrentWeather(locationKey: string) {
-    this.http.get(`${this.currentWeatherUrl}/${locationKey}`, {params: {apikey: this.apikey}})
-      .subscribe((res: CurrentWeatherInterface[]) => {
-        this.currentWeatherSubject.next(res[0]);
-      }, (err) => {
+  getLocationCurrentWeather(locationKey: string): Observable<CurrentWeatherInterface> {
+    if (!locationKey) { return of(null); }
+    // return this.http.get(`${this.currentWeatherUrl}/${locationKey}`, {params: {apikey: this.apikey}}).pipe(
+    return of([mockCurrentWeather]).pipe(
+      map((res: CurrentWeatherInterface[]) => res[0]),
+      catchError((err) => {
         this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');
-      });
+        return of(null);
+      })
+    );
   }
 
-  getLocation5DaysForecast(locationKey: string): void {
+  getLocation5DaysForecast(locationKey: string): Observable<DailyForecastModel[]> {
+    if (!locationKey) { return of(null); }
+
     // todo: use boolean to get metric / imperial degrees.
-    this.http.get(`${this.fiveDaysForecastUrl}/${locationKey}`, {params: {apikey: this.apikey, metric: 'true'}})
-      .subscribe((res: ForecastInterface) => {
-        this.fiveDaysForecastSubject.next(this.mapFiveDaysForecast(res));
-      }, (err) => {
+    // return this.http.get(`${this.fiveDaysForecastUrl}/${locationKey}`, {params: {apikey: this.apikey, metric: 'true'}}).pipe(
+    return of(mock5DaysForecast).pipe(
+      map((res: ForecastInterface) => this.mapFiveDaysForecast(res)),
+      catchError(err => {
         this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');
-      });
+        return of(null);
+      })
+    );
   }
 
   private mapFiveDaysForecast(forecast: ForecastInterface): DailyForecastModel[] {
     return forecast.DailyForecasts.map((dailyForecast: DailyForecastInterface) => this.transformDailyForecast(dailyForecast));
   }
 
-  private transformDailyForecast(dailyForecast: DailyForecastInterface): any {
+  private transformDailyForecast(dailyForecast: DailyForecastInterface): DailyForecastModel {
     return new DailyForecastModel(dailyForecast.Date, dailyForecast.Temperature, dailyForecast.Day, dailyForecast.Night);
   }
 }
