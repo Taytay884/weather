@@ -24,6 +24,7 @@ import {
 } from '../store/selectors/weather.selectors';
 import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.interface';
 import {DEGREE_TYPE} from '../enum/degreeType.enum';
+import {FavoriteCitiesLocalStorageService} from '../services/favorite-cities-local-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -48,7 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentFiveDaysForecast$: Observable<DailyForecastModel[]> = this.store.pipe(select(selectForecast));
   currentFiveDaysForecastLoading$: Observable<boolean> = this.store.pipe(select(selectForecastLoading));
 
-  constructor(private accuweatherService: AccuweatherService, private store: Store<IAppState>) {
+  constructor(private accuweatherService: AccuweatherService, private store: Store<IAppState>, private favCitiesLocalStorageService: FavoriteCitiesLocalStorageService) {
     this.selectedCitySubscription = this.store.pipe(select(selectSelectedCity)).subscribe(
       (city: CityInterface) => {
         this.selectedCity = city;
@@ -68,33 +69,54 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.selectedCity) {
-      this.onCitySelected(this.defaultCity.name);
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const subscription = this.accuweatherService.getCityByPosition(position.coords.latitude, position.coords.longitude).subscribe((city) => {
+            this.onCitySelected(city.name, city.key);
+            this.searchControl.setValue(this.selectedCity.name);
+            subscription.unsubscribe();
+          });
+        });
+      } else {
+        this.onCitySelected(this.defaultCity.name);
+      }
+    } else {
+      this.searchControl.setValue(this.selectedCity.name);
     }
-    this.searchControl.setValue(this.selectedCity.name);
   }
 
   onSearchInput(searchText: string): void {
     this.store.dispatch(new GetCities(searchText));
   }
 
-  onCitySelected(cityName: string): void {
-    const subscription = this.cities$.subscribe((cities: CityInterface[]) => {
-      const selectedCity = cities.find((city: CityInterface) => cityName === city.name);
+  onCitySelected(cityName: string, key?: string): void {
+    if (!key) {
+      const subscription = this.cities$.subscribe((cities: CityInterface[]) => {
+        const selectedCity = cities.find((city: CityInterface) => cityName === city.name);
+        this.store.dispatch(new SetSelectedCity(selectedCity));
+        this.store.dispatch(new GetCurrentWeather(selectedCity.key));
+        this.store.dispatch(new GetForecast({cityKey: selectedCity.key, degreeType: this.degreeType}));
+        subscription.unsubscribe();
+      });
+    } else {
+      const selectedCity = {name: cityName, key};
       this.store.dispatch(new SetSelectedCity(selectedCity));
       this.store.dispatch(new GetCurrentWeather(selectedCity.key));
       this.store.dispatch(new GetForecast({cityKey: selectedCity.key, degreeType: this.degreeType}));
+    }
+  }
+
+  onAddToFavoritesClicked(): void {
+    const subscription = this.currentWeather$.subscribe((currentWeather) => {
+      this.favCitiesLocalStorageService.addToFavorites({city: this.selectedCity, currentWeather});
+      this.store.dispatch(new AddToFavorites({city: this.selectedCity, currentWeather}));
     });
     subscription.unsubscribe();
   }
 
-  onAddToFavoritesClicked(): void {
-    this.currentWeather$.subscribe((currentWeather) => {
-      this.store.dispatch(new AddToFavorites({city: this.selectedCity, currentWeather}));
-    });
-  }
-
   onRemoveFromFavoritesClicked(): void {
     const favoriteCityIndex = this.favoriteCities.findIndex((favoriteCity) => favoriteCity.city.key === this.selectedCity.key);
+    this.favCitiesLocalStorageService.removeFromFavorites(favoriteCityIndex);
     this.store.dispatch(new RemoveFromFavorites(favoriteCityIndex));
   }
 

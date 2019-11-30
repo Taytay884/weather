@@ -6,6 +6,7 @@ import {selectDegreeType, selectFavoriteCities} from '../store/selectors/weather
 import {Observable, pipe} from 'rxjs';
 import {RemoveFromFavorites} from '../store/actions/weather.actions';
 import {DEGREE_TYPE} from '../enum/degreeType.enum';
+import {FavoriteCitiesLocalStorageService} from '../services/favorite-cities-local-storage.service';
 
 @Component({
   selector: 'app-favorites',
@@ -17,10 +18,11 @@ export class FavoritesComponent {
   favoriteCities$: Observable<FavoriteCityWeatherInterface[]> = this.store.select(pipe(selectFavoriteCities));
   degreeType$: Observable<DEGREE_TYPE> = this.store.select(pipe(selectDegreeType));
 
-  constructor(private store: Store<IAppState>) {
+  constructor(private store: Store<IAppState>, private favCitiesLocalStorageService: FavoriteCitiesLocalStorageService) {
   }
 
   onRemoveFromFavorites(cityIndex: number) {
+    this.favCitiesLocalStorageService.removeFromFavorites(cityIndex);
     this.store.dispatch(new RemoveFromFavorites(cityIndex));
   }
 }

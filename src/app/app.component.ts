@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
 import {IAppState} from './store/state/app.state';
 import {Store} from '@ngrx/store';
-import {GetForecast, SetTheme, SwitchDegreeType} from './store/actions/weather.actions';
+import {AddToFavorites, GetForecast, SetTheme, SwitchDegreeType} from './store/actions/weather.actions';
 import {selectDegreeType, selectTheme} from './store/selectors/weather.selectors';
 import {THEMES} from './const/themes.const';
 import {DEGREE_TYPE} from './enum/degreeType.enum';
+import {FavoriteCitiesLocalStorageService} from './services/favorite-cities-local-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent {
   degreeType: DEGREE_TYPE;
   DEGREE_TYPES = DEGREE_TYPE;
 
-  constructor(private store: Store<IAppState>) {
+  constructor(private store: Store<IAppState>, private favCitiesLocalStorageService: FavoriteCitiesLocalStorageService) {
     this.store.select(selectTheme).subscribe((theme) => {
       this.currentTheme = theme;
     });
@@ -25,6 +26,7 @@ export class AppComponent {
     this.store.select(selectDegreeType).subscribe((degreeType) => {
       this.degreeType = degreeType;
     });
+    this.loadLocalStorageFavCities();
   }
 
   switchTheme() {
@@ -34,5 +36,12 @@ export class AppComponent {
 
   switchTemperatureDegreeType() {
     this.store.dispatch(new SwitchDegreeType());
+  }
+
+  private loadLocalStorageFavCities() {
+    const localStorageFavoriteCities = this.favCitiesLocalStorageService.getFavorites();
+    localStorageFavoriteCities.forEach((favoriteCity) => {
+      this.store.dispatch(new AddToFavorites(favoriteCity));
+    });
   }
 }

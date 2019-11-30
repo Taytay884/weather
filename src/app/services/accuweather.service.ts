@@ -242,11 +242,12 @@ const mock5DaysForecast = {
 })
 export class AccuweatherService {
 
-  // apikey = 'xqrHn8gB0aQpaC3m2Ujhadx9cd6RaZGt';
-  apikey = 'IuPr9m7gy8juWIP3SbAOoWAox0VGWC5u';
+  apikey = 'xqrHn8gB0aQpaC3m2Ujhadx9cd6RaZGt';
+  // apikey = 'IuPr9m7gy8juWIP3SbAOoWAox0VGWC5u';
   cityAutoCompleteUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
   currentWeatherUrl = 'http://dataservice.accuweather.com/currentconditions/v1';
   fiveDaysForecastUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day';
+  geopositionSearchUrl = 'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search';
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandlerService) {
   }
@@ -312,5 +313,15 @@ export class AccuweatherService {
 
   private transformDailyForecast(dailyForecast: DailyForecastInterface): DailyForecastModel {
     return new DailyForecastModel(dailyForecast.Date, dailyForecast.Temperature, dailyForecast.Day, dailyForecast.Night);
+  }
+
+  getCityByPosition(latitude, longitude): Observable<CityInterface> {
+    return this.http.get(`${this.geopositionSearchUrl}`, {params: {apikey: this.apikey, q: `${latitude},${longitude}`}}).pipe(
+      map((res: any) => {return {name: res.LocalizedName, key: res.Key}}),
+      catchError(err => {
+        this.errorHandler.openErrorSnackBar('An error occured, cannot find nearby city.');
+        return of(null);
+      })
+    );
   }
 }
