@@ -5,6 +5,11 @@ import {IWeatherState} from '../state/weather.state';
 
 const selectWeather = (state: IAppState) => state.weather;
 
+export const selectTheme = createSelector(
+  selectWeather,
+  (state: IWeatherState) => state.theme
+);
+
 export const selectCities = createSelector(
   selectWeather,
   (state: IWeatherState) => state.cities

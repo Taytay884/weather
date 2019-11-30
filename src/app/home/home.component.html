@@ -1,8 +1,8 @@
-<mat-form-field class="search-bar">
+<mat-form-field color="primary" class="search-bar">
     <span matPrefix>
       <mat-icon>search</mat-icon> &nbsp;
     </span>
-  <input type="search" matInput [formControl]="myControl" placeholder="City"
+  <input type="search" matInput [formControl]="searchControl" placeholder="City"
          (input)="onSearchInput($event.target.value)" [matAutocomplete]="auto">
   <span matSuffix *ngIf="citiesLoading$ | async"><mat-spinner diameter="24"></mat-spinner></span>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelected($event.option.value)">
@@ -25,16 +25,16 @@
     </div>
     <div class="right">
       <div *ngIf="!checkIsSelectedCityFavorite()">
-        <button mat-icon-button (click)="onAddToFavoritesClicked()">
+        <button mat-icon-button color="primary" (click)="onAddToFavoritesClicked()">
           <mat-icon>star_border</mat-icon>
         </button>
-        <button mat-raised-button (click)="onAddToFavoritesClicked()">Add to Favorites</button>
+        <button mat-raised-button color="primary" (click)="onAddToFavoritesClicked()">Add to Favorites</button>
       </div>
       <div *ngIf="checkIsSelectedCityFavorite()">
-        <button mat-icon-button (click)="onRemoveFromFavoritesClicked()">
+        <button mat-icon-button color="warn" (click)="onRemoveFromFavoritesClicked()">
           <mat-icon>star</mat-icon>
         </button>
-        <button mat-raised-button (click)="onRemoveFromFavoritesClicked()">Remove From Favorites</button>
+        <button mat-raised-button color="warn" (click)="onRemoveFromFavoritesClicked()">Remove From Favorites</button>
       </div>
     </div>
   </div>

@@ -3,6 +3,12 @@ import {EWeatherActions, WeatherActions} from '../actions/weather.actions';
 
 export const weatherReducers = (state = initialWeatherState, action: WeatherActions): IWeatherState => {
   switch (action.type) {
+    case EWeatherActions.SetTheme: {
+      return {
+        ...state,
+        theme: action.payload
+      };
+    }
     case EWeatherActions.GetCities: {
       return {
         ...state,

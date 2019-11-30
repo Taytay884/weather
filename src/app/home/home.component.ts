@@ -31,7 +31,8 @@ import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.in
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  myControl = new FormControl();
+  defaultCity: CityInterface = {name: 'Tel Aviv', key: '215854'};
+  searchControl = new FormControl();
   selectedCity: CityInterface;
   selectedCitySubscription: Subscription;
   favoriteCities: FavoriteCityWeatherInterface[];
@@ -55,9 +56,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.selectedCity) {
-      this.myControl.setValue(this.selectedCity.name);
+    if (!this.selectedCity) {
+      this.onCitySelected(this.defaultCity.name);
     }
+    this.searchControl.setValue(this.selectedCity.name);
   }
 
   onSearchInput(searchText: string): void {

@@ -5,6 +5,7 @@ import {DailyForecastModel} from '../../models/DailyForecast.model';
 import {FavoriteCityWeatherInterface} from '../../interfaces/FavoriteCityWeather.interface';
 
 export enum EWeatherActions {
+  SetTheme = '[Weather] Switch Theme',
   GetCities = '[Weather] Get Cities',
   GetCitiesSuccess = '[Weather] Get Cities Success',
   GetCitiesFail = '[Weather] Get Cities Fail',
@@ -17,6 +18,13 @@ export enum EWeatherActions {
   GetForecastFail = '[Weather] Get Forecast Fail',
   AddToFavorites = '[Weather] Add To Favorites',
   RemoveFromFavorites = '[Weather] Remove From Favorites',
+}
+
+export class SetTheme implements Action {
+  public readonly type = EWeatherActions.SetTheme;
+
+  constructor(public payload: string) {
+  }
 }
 
 export class GetCities implements Action {
@@ -83,17 +91,20 @@ export class GetForecastFail implements Action {
 export class AddToFavorites implements Action {
   public readonly type = EWeatherActions.AddToFavorites;
 
-  constructor(public payload: FavoriteCityWeatherInterface) {}
+  constructor(public payload: FavoriteCityWeatherInterface) {
+  }
 }
 
 export class RemoveFromFavorites implements Action {
   public readonly type = EWeatherActions.RemoveFromFavorites;
 
-  constructor(public payload: number) {}
+  constructor(public payload: number) {
+  }
 }
 
 export type WeatherActions =
-  GetCities
+  SetTheme
+  | GetCities
   | GetCitiesSuccess
   | GetCitiesFail
   | SetSelectedCity
