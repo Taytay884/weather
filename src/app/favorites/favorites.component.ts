@@ -2,9 +2,10 @@ import {Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {IAppState} from '../store/state/app.state';
 import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.interface';
-import {selectFavoriteCities} from '../store/selectors/weather.selectors';
+import {selectDegreeType, selectFavoriteCities} from '../store/selectors/weather.selectors';
 import {Observable, pipe} from 'rxjs';
 import {RemoveFromFavorites} from '../store/actions/weather.actions';
+import {DEGREE_TYPE} from '../enum/degreeType.enum';
 
 @Component({
   selector: 'app-favorites',
@@ -14,6 +15,7 @@ import {RemoveFromFavorites} from '../store/actions/weather.actions';
 export class FavoritesComponent {
 
   favoriteCities$: Observable<FavoriteCityWeatherInterface[]> = this.store.select(pipe(selectFavoriteCities));
+  degreeType$: Observable<DEGREE_TYPE> = this.store.select(pipe(selectDegreeType));
 
   constructor(private store: Store<IAppState>) {
   }

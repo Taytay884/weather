@@ -15,6 +15,7 @@
         </button>
         <button mat-button routerLink="/favorites" routerLinkActive="mat-accent">Favorites</button>
         <button (click)="switchTheme()" mat-raised-button color="accent">Switch Theme</button>
+        <button class="switch-degree-type-button"(click)="switchTemperatureDegreeType()" mat-raised-button color="accent">Switch To {{degreeType === DEGREE_TYPES.Celsius ? '°F' : '°C'}}</button>
       </div>
       <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-sm>
         <mat-icon>menu</mat-icon>
@@ -28,6 +29,7 @@
       </button>
       <button mat-menu-item routerLink="/favorites" routerLinkActive="mat-accent">Favorites</button>
       <button (click)="switchTheme()" mat-menu-item><mat-icon>palette</mat-icon>Switch Theme</button>
+      <button (click)="switchTemperatureDegreeType()" mat-menu-item>Switch To {{degreeType === DEGREE_TYPES.Celsius ? '°F' : '°C'}}</button>
     </mat-menu>
     <main class="main-container mat-app-background">
       <router-outlet></router-outlet>

@@ -5,6 +5,7 @@
   <img src="{{'assets/weather-icons/' + weather.WeatherIcon + '-s.png'}}" alt="{{weather.WeatherText}}">
   <mat-card-subtitle>{{weather.WeatherText}}</mat-card-subtitle>
   <mat-card-content>
-    <span>{{weather.Temperature.Metric.Value + ' °C'}}</span>
+    <span *ngIf="degreeType === DEGREE_TYPES.Celsius">{{weather?.Temperature.Metric.Value + ' °C'}}</span>
+    <span *ngIf="degreeType === DEGREE_TYPES.Fahrenheit">{{weather?.Temperature.Imperial.Value + ' °F'}}</span>
   </mat-card-content>
 </mat-card>

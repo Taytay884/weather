@@ -7,9 +7,9 @@ import {
   EWeatherActions,
   GetCities,
   GetCitiesFail,
-  GetCitiesSuccess,
+  GetCitiesSuccess, GetCurrentWeather,
   GetCurrentWeatherFail,
-  GetCurrentWeatherSuccess,
+  GetCurrentWeatherSuccess, GetForecast,
   GetForecastSuccess
 } from '../actions/weather.actions';
 import {catchError, switchMap} from 'rxjs/operators';
@@ -34,7 +34,7 @@ export class WeatherEffects {
 
   @Effect()
   getCurrentWeather$ = this._actions$.pipe(
-    ofType<GetCities>(EWeatherActions.GetCurrentWeather),
+    ofType<GetCurrentWeather>(EWeatherActions.GetCurrentWeather),
     switchMap((action) => this.weatherService.getLocationCurrentWeather(action.payload)),
     switchMap((currentWeather: CurrentWeatherInterface) => of(new GetCurrentWeatherSuccess(currentWeather))),
     catchError(() => of(new GetCurrentWeatherFail()))
@@ -42,8 +42,8 @@ export class WeatherEffects {
 
   @Effect()
   getForecast$ = this._actions$.pipe(
-    ofType<GetCities>(EWeatherActions.GetForecast),
-    switchMap((action) => this.weatherService.getLocation5DaysForecast(action.payload)),
+    ofType<GetForecast>(EWeatherActions.GetForecast),
+    switchMap((action) => this.weatherService.getLocation5DaysForecast(action.payload.cityKey, action.payload.degreeType)),
     switchMap((fiveDaysForecast: DailyForecastModel[]) => of(new GetForecastSuccess(fiveDaysForecast))),
     catchError(() => of(new GetCurrentWeatherFail()))
   );

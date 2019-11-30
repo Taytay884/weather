@@ -1,7 +1,7 @@
 <h2 *ngIf="!(favoriteCities$ | async).length">You didn't add any favorite cities yet.</h2>
 <ul *ngIf="(favoriteCities$ | async).length" class="favorites" fxLayout="row wrap" fxLayoutAlign="center">
   <li *ngFor="let favCity of favoriteCities$ | async; let cityIndex = index">
-    <app-weather-city-card [city]="favCity.city" [weather]="favCity.currentWeather"></app-weather-city-card>
+    <app-weather-city-card [city]="favCity.city" [weather]="favCity.currentWeather" [degreeType]="degreeType$ | async"></app-weather-city-card>
     <button class="delete-button mat-warn" mat-stroked-button (click)="onRemoveFromFavorites(cityIndex)">Remove</button>
   </li>
 </ul>

@@ -10,6 +10,11 @@ export const selectTheme = createSelector(
   (state: IWeatherState) => state.theme
 );
 
+export const selectDegreeType = createSelector(
+  selectWeather,
+  (state: IWeatherState) => state.degreeType
+);
+
 export const selectCities = createSelector(
   selectWeather,
   (state: IWeatherState) => state.cities

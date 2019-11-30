@@ -1,5 +1,6 @@
 import {initialWeatherState, IWeatherState} from '../state/weather.state';
 import {EWeatherActions, WeatherActions} from '../actions/weather.actions';
+import {DEGREE_TYPE} from '../../enum/degreeType.enum';
 
 export const weatherReducers = (state = initialWeatherState, action: WeatherActions): IWeatherState => {
   switch (action.type) {
@@ -7,6 +8,12 @@ export const weatherReducers = (state = initialWeatherState, action: WeatherActi
       return {
         ...state,
         theme: action.payload
+      };
+    }
+    case EWeatherActions.SwitchDegreeType: {
+      return {
+        ...state,
+        degreeType: state.degreeType === DEGREE_TYPE.Celsius ? DEGREE_TYPE.Fahrenheit : DEGREE_TYPE.Celsius
       };
     }
     case EWeatherActions.GetCities: {

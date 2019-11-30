@@ -3,9 +3,11 @@ import {CityInterface} from '../../interfaces/City.interface';
 import {CurrentWeatherInterface} from '../../interfaces/CurrentWeather.interface';
 import {DailyForecastModel} from '../../models/DailyForecast.model';
 import {FavoriteCityWeatherInterface} from '../../interfaces/FavoriteCityWeather.interface';
+import {GetForecastPayloadInterface} from '../../interfaces/GetForecastPayload.interface';
 
 export enum EWeatherActions {
-  SetTheme = '[Weather] Switch Theme',
+  SetTheme = '[Weather] Set Theme',
+  SwitchDegreeType = '[Weather] Switch Degree Type',
   GetCities = '[Weather] Get Cities',
   GetCitiesSuccess = '[Weather] Get Cities Success',
   GetCitiesFail = '[Weather] Get Cities Fail',
@@ -25,6 +27,10 @@ export class SetTheme implements Action {
 
   constructor(public payload: string) {
   }
+}
+
+export class SwitchDegreeType implements Action {
+  public readonly type = EWeatherActions.SwitchDegreeType;
 }
 
 export class GetCities implements Action {
@@ -73,7 +79,7 @@ export class GetCurrentWeatherFail implements Action {
 export class GetForecast implements Action {
   public readonly type = EWeatherActions.GetForecast;
 
-  constructor(public payload: string) {
+  constructor(public payload: GetForecastPayloadInterface) {
   }
 }
 
@@ -104,6 +110,7 @@ export class RemoveFromFavorites implements Action {
 
 export type WeatherActions =
   SetTheme
+  | SwitchDegreeType
   | GetCities
   | GetCitiesSuccess
   | GetCitiesFail

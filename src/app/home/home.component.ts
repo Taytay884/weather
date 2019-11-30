@@ -19,10 +19,11 @@ import {
   selectCities,
   selectCitiesLoading,
   selectCurrentWeather,
-  selectCurrentWeatherLoading, selectFavoriteCities, selectForecast, selectForecastLoading,
+  selectCurrentWeatherLoading, selectDegreeType, selectFavoriteCities, selectForecast, selectForecastLoading,
   selectSelectedCity
 } from '../store/selectors/weather.selectors';
 import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.interface';
+import {DEGREE_TYPE} from '../enum/degreeType.enum';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +32,9 @@ import {FavoriteCityWeatherInterface} from '../interfaces/FavoriteCityWeather.in
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  degreeType: DEGREE_TYPE;
+  DEGREE_TYPES = DEGREE_TYPE;
+  degreeTypeSubscription: Subscription;
   defaultCity: CityInterface = {name: 'Tel Aviv', key: '215854'};
   searchControl = new FormControl();
   selectedCity: CityInterface;
@@ -53,6 +57,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       (favoriteCities: FavoriteCityWeatherInterface[]) => {
         this.favoriteCities = favoriteCities;
       });
+    this.degreeTypeSubscription = this.store.select(selectDegreeType).subscribe((degreeType) => {
+      this.degreeType = degreeType;
+      // We need to send an API Request to get the other degreeType.
+      if (this.selectedCity) {
+        this.store.dispatch(new GetForecast({cityKey: this.selectedCity.key, degreeType: this.degreeType}));
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -71,7 +82,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       const selectedCity = cities.find((city: CityInterface) => cityName === city.name);
       this.store.dispatch(new SetSelectedCity(selectedCity));
       this.store.dispatch(new GetCurrentWeather(selectedCity.key));
-      this.store.dispatch(new GetForecast(selectedCity.key));
+      this.store.dispatch(new GetForecast({cityKey: selectedCity.key, degreeType: this.degreeType}));
     });
     subscription.unsubscribe();
   }
@@ -97,6 +108,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.selectedCitySubscription.unsubscribe();
     this.favoriteCitiesSubscription.unsubscribe();
+    this.degreeTypeSubscription.unsubscribe();
   }
 
 }

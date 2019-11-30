@@ -9,6 +9,7 @@ import {CityInterface} from '../interfaces/City.interface';
 import {CurrentWeatherInterface} from '../interfaces/CurrentWeather.interface';
 import {DailyForecastInterface} from '../interfaces/DailyForecast.interface';
 import {catchError, map} from 'rxjs/operators';
+import {DEGREE_TYPE} from '../enum/degreeType.enum';
 
 const mockAutoCompleteJson = [
   {
@@ -251,10 +252,12 @@ export class AccuweatherService {
   }
 
   getLocationAutoComplete(query: string): Observable<CityInterface[]> {
-    if (!query) { return of([]); }
+    if (!query) {
+      return of([]);
+    }
 
-    // return this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).pipe(
-    return of(mockAutoCompleteJson).pipe(
+    return this.http.get(this.cityAutoCompleteUrl, {params: {apikey: this.apikey, q: query}}).pipe(
+    // return of(mockAutoCompleteJson).pipe(
       map((res: AutocompleteCityInterface[]) => {
         return this.getCitiesFromAutocompleteJson(res);
       }), catchError((err) => {
@@ -271,9 +274,11 @@ export class AccuweatherService {
   }
 
   getLocationCurrentWeather(locationKey: string): Observable<CurrentWeatherInterface> {
-    if (!locationKey) { return of(null); }
-    // return this.http.get(`${this.currentWeatherUrl}/${locationKey}`, {params: {apikey: this.apikey}}).pipe(
-    return of([mockCurrentWeather]).pipe(
+    if (!locationKey) {
+      return of(null);
+    }
+    return this.http.get(`${this.currentWeatherUrl}/${locationKey}`, {params: {apikey: this.apikey}}).pipe(
+    // return of([mockCurrentWeather]).pipe(
       map((res: CurrentWeatherInterface[]) => res[0]),
       catchError((err) => {
         this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');
@@ -282,12 +287,17 @@ export class AccuweatherService {
     );
   }
 
-  getLocation5DaysForecast(locationKey: string): Observable<DailyForecastModel[]> {
-    if (!locationKey) { return of(null); }
-
-    // todo: use boolean to get metric / imperial degrees.
-    // return this.http.get(`${this.fiveDaysForecastUrl}/${locationKey}`, {params: {apikey: this.apikey, metric: 'true'}}).pipe(
-    return of(mock5DaysForecast).pipe(
+  getLocation5DaysForecast(locationKey: string, degreeType: DEGREE_TYPE): Observable<DailyForecastModel[]> {
+    if (!locationKey) {
+      return of(null);
+    }
+    return this.http.get(`${this.fiveDaysForecastUrl}/${locationKey}`, {
+      params: {
+        apikey: this.apikey,
+        metric: String(degreeType === DEGREE_TYPE.Celsius)
+      }
+    }).pipe(
+      // return of(mock5DaysForecast).pipe(
       map((res: ForecastInterface) => this.mapFiveDaysForecast(res)),
       catchError(err => {
         this.errorHandler.openErrorSnackBar('An error occured, cannot load forecast.');

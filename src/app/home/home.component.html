@@ -19,9 +19,8 @@
   <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
     <div class="left">
       <h2>{{selectedCity?.name}}</h2>
-      <!--todo: imperial or metric-->
-      <span>{{currentWeather?.Temperature.Metric.Value + ' °C'}}</span>
-      <!--<span>{{currentWeather?.Temperature.Imperial.Value + ' °F'}}</span>-->
+      <span *ngIf="degreeType === DEGREE_TYPES.Celsius">{{currentWeather?.Temperature.Metric.Value + ' °C'}}</span>
+      <span *ngIf="degreeType === DEGREE_TYPES.Fahrenheit">{{currentWeather?.Temperature.Imperial.Value + ' °F'}}</span>
     </div>
     <div class="right">
       <div *ngIf="!checkIsSelectedCityFavorite()">
