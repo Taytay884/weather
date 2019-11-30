@@ -2,7 +2,7 @@ import {initialWeatherState, IWeatherState} from '../state/weather.state';
 import {EWeatherActions, WeatherActions} from '../actions/weather.actions';
 import {DEGREE_TYPE} from '../../enum/degreeType.enum';
 
-export const weatherReducers = (state = initialWeatherState, action: WeatherActions): IWeatherState => {
+export function weatherReducers(state = initialWeatherState, action: WeatherActions): IWeatherState {
   switch (action.type) {
     case EWeatherActions.SetTheme: {
       return {
@@ -97,4 +97,4 @@ export const weatherReducers = (state = initialWeatherState, action: WeatherActi
     default:
       return state;
   }
-};
+}

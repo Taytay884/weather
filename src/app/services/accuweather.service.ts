@@ -244,10 +244,10 @@ export class AccuweatherService {
 
   apikey = 'xqrHn8gB0aQpaC3m2Ujhadx9cd6RaZGt';
   // apikey = 'IuPr9m7gy8juWIP3SbAOoWAox0VGWC5u';
-  cityAutoCompleteUrl = 'http://dataservice.accuweather.com/locations/v1/cities/autocomplete';
-  currentWeatherUrl = 'http://dataservice.accuweather.com/currentconditions/v1';
-  fiveDaysForecastUrl = 'http://dataservice.accuweather.com/forecasts/v1/daily/5day';
-  geopositionSearchUrl = 'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search';
+  cityAutoCompleteUrl = 'https://dataservice.accuweather.com/locations/v1/cities/autocomplete';
+  currentWeatherUrl = 'https://dataservice.accuweather.com/currentconditions/v1';
+  fiveDaysForecastUrl = 'https://dataservice.accuweather.com/forecasts/v1/daily/5day';
+  geopositionSearchUrl = 'https://dataservice.accuweather.com/locations/v1/cities/geoposition/search';
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandlerService) {
   }
