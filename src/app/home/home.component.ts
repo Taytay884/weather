@@ -76,9 +76,10 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.searchControl.setValue(this.selectedCity.name);
             subscription.unsubscribe();
           });
+        }, () => {
+          this.onCitySelected(this.defaultCity.name, this.defaultCity.key);
+          this.searchControl.setValue(this.selectedCity.name);
         });
-      } else {
-        this.onCitySelected(this.defaultCity.name);
       }
     } else {
       this.searchControl.setValue(this.selectedCity.name);
